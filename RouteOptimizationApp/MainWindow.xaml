@@ -1,0 +1,429 @@
+﻿<Window x:Class="RouteOptimizationApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
+        Title="Система за оптимизация на маршрути"
+        Height="820"
+        Width="1380"
+        WindowStartupLocation="CenterScreen"
+        Background="#F3F6FA">
+
+    <Window.Resources>
+
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Margin" Value="0,6,0,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+        </Style>
+
+        <Style x:Key="SecondaryButton"
+               TargetType="Button"
+               BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#64748B"/>
+            <Setter Property="BorderBrush" Value="#64748B"/>
+        </Style>
+
+        <Style x:Key="DangerButton"
+               TargetType="Button"
+               BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#DC2626"/>
+            <Setter Property="BorderBrush" Value="#DC2626"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Margin="16">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="390"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT PANEL -->
+        <Grid Grid.Column="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1.3*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- TITLE -->
+            <Border Grid.Row="0"
+                    Style="{StaticResource Card}"
+                    Margin="0,0,0,10">
+
+                <TextBlock Text="Система за оптимизация на маршрути"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
+            </Border>
+
+            <!-- SETTINGS -->
+            <Border Grid.Row="1"
+                    Style="{StaticResource Card}"
+                    Margin="0,0,0,10">
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                    <StackPanel>
+
+                        <TextBlock Text="Настройки"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Foreground="#2563EB"
+                                   Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Алгоритъм"
+                                   FontWeight="Bold"/>
+
+                        <ComboBox x:Name="AlgorithmComboBox"
+                                  Margin="0,5,0,10">
+
+                            <ComboBoxItem Content="Dijkstra" IsSelected="True"/>
+                            <ComboBoxItem Content="A*"/>
+                            <ComboBoxItem Content="A* ML Heuristic"/>
+                            <ComboBoxItem Content="Genetic Algorithm"/>
+                            <ComboBoxItem Content="Floyd-Warshall"/>
+
+                        </ComboBox>
+
+                        <TextBlock Text="Критерий за оптимизация"
+                                   FontWeight="Bold"/>
+
+                        <ComboBox x:Name="OptimizationModeComboBox"
+                                  Margin="0,5,0,10">
+
+                            <ComboBoxItem Content="Най-бърз маршрут" IsSelected="True"/>
+                            <ComboBoxItem Content="Най-кратък маршрут"/>
+                            <ComboBoxItem Content="Минимален трафик"/>
+                            <ComboBoxItem Content="Минимален разход"/>
+
+                        </ComboBox>
+
+                        <TextBlock Text="Ниво на трафик"
+                                   FontWeight="Bold"/>
+
+                        <ComboBox x:Name="TrafficComboBox"
+                                  Margin="0,5,0,10"
+                                  SelectionChanged="TrafficComboBox_SelectionChanged">
+
+                            <ComboBoxItem Content="Нисък трафик" IsSelected="True"/>
+                            <ComboBoxItem Content="Среден трафик"/>
+                            <ComboBoxItem Content="Висок трафик"/>
+                            <ComboBoxItem Content="Инцидент / затворен път"/>
+
+                        </ComboBox>
+
+                        <Separator Margin="0,8"/>
+
+                        <CheckBox x:Name="MlPredictionCheckBox"
+                                  Content="ML прогнозиране на трафик"
+                                  Margin="0,4"/>
+
+                        <CheckBox x:Name="AutoRerouteCheckBox"
+                                  Content="Автоматично преизчисляване"
+                                  Margin="0,4"/>
+
+                        <CheckBox x:Name="AnimationCheckBox"
+                                  Content="Анимация на маршрута"
+                                  Margin="0,4"/>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+            </Border>
+
+            <!-- LEGEND -->
+            <Border Grid.Row="2"
+                    Style="{StaticResource Card}"
+                    Margin="0,0,0,10">
+
+                <StackPanel>
+
+                    <TextBlock Text="Легенда"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               Foreground="#2563EB"
+                               Margin="0,0,0,10"/>
+
+                    <UniformGrid Columns="2">
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Ellipse Width="14"
+                                     Height="14"
+                                     Fill="Green"
+                                     Stroke="White"
+                                     StrokeThickness="1"/>
+
+                            <TextBlock Text="Начало"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Ellipse Width="14"
+                                     Height="14"
+                                     Fill="Red"
+                                     Stroke="White"
+                                     StrokeThickness="1"/>
+
+                            <TextBlock Text="Край"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Ellipse Width="14"
+                                     Height="14"
+                                     Fill="SteelBlue"
+                                     Stroke="White"
+                                     StrokeThickness="1"/>
+
+                            <TextBlock Text="Град"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Rectangle Width="24"
+                                       Height="6"
+                                       Fill="DeepSkyBlue"
+                                       RadiusX="2"
+                                       RadiusY="2"/>
+
+                            <TextBlock Text="Маршрут"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Rectangle Width="24"
+                                       Height="5"
+                                       Fill="Green"
+                                       RadiusX="2"
+                                       RadiusY="2"/>
+
+                            <TextBlock Text="Нисък трафик"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Rectangle Width="24"
+                                       Height="5"
+                                       Fill="Goldenrod"
+                                       RadiusX="2"
+                                       RadiusY="2"/>
+
+                            <TextBlock Text="Среден трафик"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Rectangle Width="24"
+                                       Height="5"
+                                       Fill="OrangeRed"
+                                       RadiusX="2"
+                                       RadiusY="2"/>
+
+                            <TextBlock Text="Висок трафик"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4">
+
+                            <Rectangle Width="24"
+                                       Height="5"
+                                       Fill="DarkRed"
+                                       RadiusX="2"
+                                       RadiusY="2"/>
+
+                            <TextBlock Text="Инцидент"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                    </UniformGrid>
+
+                </StackPanel>
+
+            </Border>
+
+            <!-- ACTIONS -->
+            <Border Grid.Row="3"
+                    Style="{StaticResource Card}">
+
+                <StackPanel>
+
+                    <TextBlock Text="Действия"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               Foreground="#2563EB"
+                               Margin="0,0,0,8"/>
+
+                    <Button Content="Намери маршрут"
+                            Click="FindRoute_Click"/>
+
+                    <Button Content="Сравни всички алгоритми"
+                            Style="{StaticResource SecondaryButton}"
+                            Click="CompareAlgorithms_Click"/>
+
+                    <UniformGrid Columns="2"
+                                 Margin="0,6,0,0">
+
+                        <Button Content="Графики"
+                                Style="{StaticResource SecondaryButton}"
+                                Margin="0,0,4,0"
+                                Click="ShowCharts_Click"/>
+
+                        <Button Content="CSV"
+                                Style="{StaticResource SecondaryButton}"
+                                Margin="4,0,0,0"
+                                Click="ExportCsv_Click"/>
+
+                    </UniformGrid>
+
+                    <Button Content="Изчисти избора"
+                            Style="{StaticResource DangerButton}"
+                            Click="ClearSelection_Click"/>
+
+                </StackPanel>
+
+            </Border>
+
+        </Grid>
+
+        <!-- RIGHT SIDE -->
+        <Grid Grid.Column="1"
+              Margin="16,0,0,0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="260"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- RESULT PANEL -->
+            <Border Grid.Row="0"
+                    Background="White"
+                    CornerRadius="16"
+                    Padding="14"
+                    Margin="0,0,0,12"
+                    BorderBrush="#2563EB"
+                    BorderThickness="2">
+
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="#EFF6FF"
+                            CornerRadius="10"
+                            Padding="10"
+                            Margin="0,0,0,10">
+
+                        <TextBlock Text="Резултат от изчисленията"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#1D4ED8"
+                                   HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Background="#F8FAFC"
+                                  Padding="10">
+
+                        <TextBlock x:Name="ResultTextBlock"
+                                   Text="Изберете начален и краен град."
+                                   TextWrapping="Wrap"
+                                   FontSize="13"
+                                   LineHeight="20"
+                                   Foreground="#111827"/>
+
+                    </ScrollViewer>
+
+                </Grid>
+
+            </Border>
+
+            <!-- MAP -->
+            <Border Grid.Row="1"
+                    Background="White"
+                    CornerRadius="16"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1">
+
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="54"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="#0F172A"
+                            CornerRadius="16,16,0,0"
+                            Padding="18,0">
+
+                        <Grid>
+
+                            <TextBlock Text="Визуализация върху карта на България"
+                                       TextAlignment="Center"
+                                       Foreground="White"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            
+                        </Grid>
+
+                    </Border>
+
+                    <gmap:GMapControl x:Name="Map"
+                                      Grid.Row="1"
+                                      MinZoom="5"
+                                      MaxZoom="18"/>
+
+                </Grid>
+
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</Window>
